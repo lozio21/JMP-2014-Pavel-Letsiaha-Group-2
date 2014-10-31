@@ -2,17 +2,17 @@ package com.epam.jmp.marathon;
 
 import java.util.Random;
 
-public class Runner implements  Runnable {
+public class Runner implements Runnable {
+
+    private static final int SLEEP_LIMIT_PER_ONE_TIME = 500;
 
     private String name;
     private Marathon marathon;
-    private int timeToSleep;
     private RunnerState runnerState = RunnerState.WAITING;
 
-    public Runner(String name, Marathon marathon, int timeToSleep) {
+    public Runner(String name, Marathon marathon) {
         this.name = name;
         this.marathon = marathon;
-        this.timeToSleep = timeToSleep;
     }
 
     @Override
@@ -21,19 +21,20 @@ public class Runner implements  Runnable {
             marathon.getStart().await();
             runnerState = RunnerState.RUNNING;
             Random random = new Random();
-            int coveredDistance  = 0;
-            while (coveredDistance < marathon.getDistance()){
+            int timeToSleep = marathon.getTimeToSleep();
+            int coveredDistance = 0;
+            while (coveredDistance < marathon.getDistance()) {
                 if (random.nextBoolean()) {
                     if (timeToSleep > 0) {
                         runnerState = RunnerState.SLEEPING;
-                        int sleepTime = random.nextInt(500);
+                        int sleepTime = random.nextInt((timeToSleep <= SLEEP_LIMIT_PER_ONE_TIME) ? timeToSleep : SLEEP_LIMIT_PER_ONE_TIME);
                         timeToSleep -= sleepTime;
                         Thread.sleep(sleepTime);
                     }
                 } else {
                     runnerState = RunnerState.RUNNING;
-                    coveredDistance += random.nextInt(400);
-                    Thread.sleep(200);
+                    coveredDistance += 300;
+                    Thread.sleep(300);
                 }
             }
             if (timeToSleep > 0) {

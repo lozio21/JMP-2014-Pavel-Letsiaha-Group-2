@@ -11,7 +11,7 @@ public class Marathon {
 
     private int numberOfRunners;
     private int distance;
-    private int[] timeToSleep;
+    private int timeToSleep;
 
     private CountDownLatch start;
     private CountDownLatch finish;
@@ -19,7 +19,7 @@ public class Marathon {
     private List<Runner> members;
     private List<String> results;
 
-    public Marathon(int numberOfRunners, int numberOfDays, int[] timeToSleep) {
+    public Marathon(int numberOfRunners, int numberOfDays, int timeToSleep) {
         this.numberOfRunners = numberOfRunners;
         this.distance = numberOfDays;
         this.timeToSleep = timeToSleep;
@@ -35,7 +35,7 @@ public class Marathon {
         for (int i = 0; i < numberOfRunners; i++) {
             sb.append(RUNNER_NAME);
             sb.append(i + 1);
-            Runner runner = new Runner(sb.toString(), this, timeToSleep[i]);
+            Runner runner = new Runner(sb.toString(), this);
             sb.setLength(0);
             members.add(runner);
             new Thread(runner).start();
@@ -79,7 +79,7 @@ public class Marathon {
         }
     }
 
-    public void addToResults(String name){
+    public void addToResults(String name) {
         if (results != null) {
             results.add(name);
         }
@@ -87,6 +87,10 @@ public class Marathon {
 
     public int getDistance() {
         return distance;
+    }
+
+    public int getTimeToSleep() {
+        return timeToSleep;
     }
 
     public CountDownLatch getStart() {
