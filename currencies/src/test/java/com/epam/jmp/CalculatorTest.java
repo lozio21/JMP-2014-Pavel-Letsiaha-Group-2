@@ -2,17 +2,17 @@ package com.epam.jmp;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -23,54 +23,56 @@ public class CalculatorTest {
     private Calculator calculator;
     private Double[] testData = new Double[]{10830.0000, 10820.0000, 10810.0000, 10800.0000};
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
         calculator = new Calculator(dataProvider);
+        when(dataProvider.getCurrencyRates()).thenReturn(testData);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testIncorrectFunction() {
-        when(dataProvider.getCurrencyRates()).thenReturn(testData);
-        calculator.calculateAggregateFunction("count");
+    @Test
+    public void testUnsupportedFunction() throws IllegalArgumentException {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("There is no implementation of this function in calculator.");
+        calculator.calculateAggregateFunction(AggregateFunction.COUNT);
     }
 
     @Test
     public void testMaxFunction() {
-        when(dataProvider.getCurrencyRates()).thenReturn(testData);
+        Double result = calculator.calculateAggregateFunction(AggregateFunction.MAX);
         Double expected = 10830.0000;
-        Double result = calculator.calculateAggregateFunction("max");
-        assertThat(result, equalTo(expected));
+        assertEquals(expected, result);
     }
 
     @Test
     public void testMinFunction() {
-        when(dataProvider.getCurrencyRates()).thenReturn(testData);
+        Double result = calculator.calculateAggregateFunction(AggregateFunction.MIN);
         Double expected = 10800.0000;
-        Double result = calculator.calculateAggregateFunction("min");
-        assertThat(result, equalTo(expected));
+        assertEquals(expected, result);
     }
 
     @Test
     public void testAvgFunction() {
-        when(dataProvider.getCurrencyRates()).thenReturn(testData);
+        Double result = calculator.calculateAggregateFunction(AggregateFunction.AVG);
         Double expected = 10815.0000;
-        Double result = calculator.calculateAggregateFunction("avg");
-        assertThat(result, equalTo(expected));
+        assertEquals(expected, result);
     }
 
     @Test
     public void testCalculateMethodWhenArrayIsEmpty() {
         when(dataProvider.getCurrencyRates()).thenReturn(new Double[0]);
-        Double result = calculator.calculateAggregateFunction("max");
-        assertThat(result, is(nullValue()));
+        Double result = calculator.calculateAggregateFunction(AggregateFunction.MAX);
+        assertNull(result);
     }
 
     @Test
     public void testCalculateMethodWhenArrayIsNull() {
         when(dataProvider.getCurrencyRates()).thenReturn(null);
-        Double result = calculator.calculateAggregateFunction("max");
-        assertThat(result, is(nullValue()));
+        Double result = calculator.calculateAggregateFunction(AggregateFunction.MAX);
+        assertNull(result);
     }
 
     @After

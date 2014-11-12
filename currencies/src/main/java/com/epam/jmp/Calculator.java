@@ -11,23 +11,23 @@ public class Calculator {
         this.dataProvider = dataProvider;
     }
 
-    public Double calculateAggregateFunction(String function) {
+    public Double calculateAggregateFunction(AggregateFunction function) {
 
         Double[] currencyRates = dataProvider.getCurrencyRates();
 
         if (currencyRates != null && currencyRates.length > 0) {
-            switch (function.toUpperCase()) {
-                case "MAX": {
+            switch (function) {
+                case MAX: {
                     return Collections.max(Arrays.asList(currencyRates));
                 }
-                case "MIN": {
+                case MIN: {
                     return Collections.min(Arrays.asList(currencyRates));
                 }
-                case "AVG": {
+                case AVG: {
                     return calculateAverage(currencyRates);
                 }
                 default:
-                    throw new IllegalArgumentException("Incorrect function! Use one of the following functions: max, min, avg.");
+                    throw new IllegalArgumentException("There is no implementation of this function in calculator.");
             }
         } else {
             return null;
