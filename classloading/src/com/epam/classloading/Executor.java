@@ -24,7 +24,6 @@ public class Executor {
         JarClassLoader classLoader = new JarClassLoader(pathToJar);
 
             try (JarFile jarFile = new JarFile(pathToJar)){
-
                 Enumeration entries = jarFile.entries();
 
                 while(entries.hasMoreElements())
@@ -61,9 +60,10 @@ public class Executor {
                     String className = commands.get(i);
                     Class clazz = Class.forName(className, true, classLoader);
                     ((IModule) clazz.newInstance()).execute();
+                    Thread.sleep(5000);
                 } catch (NumberFormatException | IndexOutOfBoundsException ex) {
                     System.out.println("Please enter correct command.");
-                } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+                } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException |InterruptedException ex) {
                     System.out.println("Unexpected error: " + ex.getMessage());
                 }
             }

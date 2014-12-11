@@ -7,7 +7,7 @@ import java.util.jar.JarFile;
 
 public class JarClassLoader extends ClassLoader {
 
-    private static String pathToJarFile;
+    private String pathToJarFile;
 
     public JarClassLoader(ClassLoader parent) {
         super(parent);
@@ -35,6 +35,7 @@ public class JarClassLoader extends ClassLoader {
         try {
             return findSystemClass(className);
         } catch (ClassNotFoundException e) {
+            System.err.println("The Class " + className + " has not been loaded.");
         }
 
         try (JarFile jarFile = new JarFile(pathToJarFile)){
